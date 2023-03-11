@@ -3,7 +3,7 @@ from ariadne import graphql_sync, make_executable_schema, gql, load_schema_from_
 from ariadne.explorer import ExplorerGraphiQL
 from model import query
 
-type_defs = gql(load_schema_from_path("./schema.graphql"))
+type_defs = gql(load_schema_from_path("../schema.graphql"))
 schema = make_executable_schema(type_defs, query)
 explorer_html = ExplorerGraphiQL().html(None)
 
