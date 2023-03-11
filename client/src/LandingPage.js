@@ -1,34 +1,53 @@
 import { useQuery } from 'graphql-hooks'
 import map from './map.jpg'
 import Container from 'react-bootstrap/Container';
+import ImageMarker from 'react-image-marker';
+import { useEffect, useState } from 'react';
 
 const TRAINS_QUERY = `query TrainsQuery {
-  trains
+  trains {
+    top
+    left
+  }
 }`
 
 function LandingPage() {
-  const { loading, error, data } = useQuery(TRAINS_QUERY)
+  const { error, data, refetch } = useQuery(TRAINS_QUERY)
 
-  let content = null;
-
-  if (loading) {
-    content = <label>Loading</label>
-  }
+  useEffect(() => {
+    const interval = setInterval(() => {
+      refetch()
+    }, 1000);
+    return () => clearInterval(interval);
+  }, []);
 
   if (error) {
-    content = <label>Error fetching Trains!</label>
+    return <label>Error fetching Trains!</label>
   }
 
+  let markers = []
   if (data) {
-    content =
-    <ul>
-      {data.trains.map(train => <li>{train}</li>)}
-    </ul>
+    markers = data.trains.map(train => {
+      const train_data = {
+        left: train.left,
+        top: train.top,
+      }
+      return train_data
+    })
   }
+
+  // const [markers, setMarkers] = useState([]);
 
   return (
     <Container fluid>
-      <img src={map} alt="Map of New York City subway"/>
+      <ImageMarker
+        src={map}
+        markers={markers}
+        // onAddMarker={(marker) => {
+        //   console.log(marker.top + "\n" + marker.left);
+        //   setMarkers([...markers, marker])
+        // }}
+      />
     </Container>
   );
 }

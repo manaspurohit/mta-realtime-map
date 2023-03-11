@@ -1,4 +1,9 @@
 type Query {
   hello: String!
-  trains: [String!]!
+  trains: [Train!]!
+}
+
+type Train {
+  top: Float!
+  left: Float!
 }
