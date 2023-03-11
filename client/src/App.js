@@ -1,5 +1,5 @@
 import { GraphQLClient, ClientContext } from 'graphql-hooks';
-import AppHeader from './AppHeader';
+import LandingPage from './LandingPage';
 
 const client = new GraphQLClient({
   url: '/graphql'
@@ -8,7 +8,7 @@ const client = new GraphQLClient({
 function App() {
   return (
     <ClientContext.Provider value={client}>
-      <AppHeader />
+      <LandingPage />
     </ClientContext.Provider>
   )
 }

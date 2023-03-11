@@ -1,12 +1,13 @@
 import { useQuery } from 'graphql-hooks'
-import './App.css';
+import map from './map.jpg'
+import Container from 'react-bootstrap/Container';
 
 const TRAINS_QUERY = `query TrainsQuery {
   trains
 }`
 
-function AppHeader() {
-  const { loading, error, data } = useQuery(HELLO_QUERY)
+function LandingPage() {
+  const { loading, error, data } = useQuery(TRAINS_QUERY)
 
   let content = null;
 
@@ -26,14 +27,10 @@ function AppHeader() {
   }
 
   return (
-    <div className="App">
-      <header className="App-header">
-        <label>
-          {content}
-        </label>
-      </header>
-    </div>
+    <Container fluid>
+      <img src={map} alt="Map of New York City subway"/>
+    </Container>
   );
 }
 
-export default AppHeader;
+export default LandingPage;
