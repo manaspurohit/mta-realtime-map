@@ -27,7 +27,7 @@ function Train(props) {
       <img
         src={image}
         alt="C train logo"
-        className={southbound && 'Train_south'}
+        className={southbound ? 'Train_south' : undefined}
       />
     </div>
   )
@@ -39,7 +39,7 @@ function LandingPage() {
   useEffect(() => {
     const interval = setInterval(() => {
       refetch()
-    }, 10000);
+    }, 1000);
     return () => clearInterval(interval);
   }, [refetch]);
 
