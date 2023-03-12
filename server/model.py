@@ -19,9 +19,23 @@ def resolve_trains(_, info):
 
 def train_to_coordinates(train):
   train_stop = train._stops.get_station_name(train.location)
-  train_coordinates = Train(top_dict[train_stop], left_dict[train_stop])
+  train_status = "STOPPED" if train.location_status == "STOPPED_AT" else "IN_TRANSIT"
+  train_coordinates = Train(
+    id=train.trip_id,
+    top=top_dict[train_stop],
+    left=left_dict[train_stop],
+    status=train_status,
+    direction=train.direction
+  )
   return train_coordinates
 
+class Train:
+  def __init__(self, id, top, left, status, direction):
+    self.id = id
+    self.top = top
+    self.left = left
+    self.status = status
+    self.direction = direction
 
 top_dict = {
   'Inwood-207 St': 15.795520254416688,
@@ -129,8 +143,3 @@ left_dict = {
   'East Broadway': 30.48611111111111,
   'York St': 39.30555555555556,
 }
-
-class Train:
-  def __init__(self, top, left):
-    self.top = top
-    self.left = left

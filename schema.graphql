@@ -4,6 +4,19 @@ type Query {
 }
 
 type Train {
+  id: String!
   top: Float!
   left: Float!
+  status: Status!
+  direction: Direction!
+}
+
+enum Status {
+  STOPPED
+  IN_TRANSIT
+}
+
+enum Direction {
+  N
+  S
 }

@@ -36,3 +36,7 @@
     transform: rotate(360deg);
   }
 }
+
+.Train_south {
+  transform: rotate(-180deg);
+}
