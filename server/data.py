@@ -10,6 +10,12 @@ ace_feed = NYCTFeed("A", api_key=api_key)
 # l_feed = NYCTFeed("L", api_key=api_key)
 # one234567_feed = NYCTFeed("1", api_key=api_key)
 
+line_to_feed = {
+  'A': ace_feed,
+  'C': ace_feed,
+  'E': ace_feed
+}
+
 def refresh_data():
   seconds = 1
   while True:

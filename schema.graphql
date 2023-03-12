@@ -1,6 +1,6 @@
 type Query {
   hello: String!
-  trains: [Train!]!
+  trains(lines: [LineWithDirection!]!): [Train!]!
 }
 
 type Train {
@@ -8,6 +8,7 @@ type Train {
   top: Float!
   left: Float!
   status: Status!
+  line: Line!
   direction: Direction!
 }
 
@@ -19,4 +20,15 @@ enum Status {
 enum Direction {
   N
   S
+}
+
+enum Line {
+  A
+  C
+  E
+}
+
+input LineWithDirection {
+  line: Line!
+  direction: Direction!
 }

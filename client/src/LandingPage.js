@@ -7,8 +7,8 @@ import ImageMarker from 'react-image-marker';
 import { useEffect, useState } from 'react';
 import "./App.css";
 
-const TRAINS_QUERY = `query TrainsQuery {
-  trains {
+const TRAINS_QUERY = `query TrainsQuery($lines: [LineWithDirection!]!) {
+  trains(lines: $lines) {
     id
     top
     left
@@ -34,7 +34,20 @@ function Train(props) {
 }
 
 function LandingPage() {
-  const { error, data, refetch } = useQuery(TRAINS_QUERY)
+  const { error, data, refetch } = useQuery(TRAINS_QUERY, {
+    variables: {
+      lines: [
+        {
+          line: 'C',
+          direction: 'S'
+        },
+        {
+          line: 'C',
+          direction: 'N'
+        }
+      ]
+    }
+  })
 
   useEffect(() => {
     const interval = setInterval(() => {

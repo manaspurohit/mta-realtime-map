@@ -3,7 +3,7 @@ from nyct_gtfs import NYCTFeed
 from api_key import *
 from stops_to_coordinates import top_dict, left_dict
 from train import Train
-from data import ace_feed
+from data import line_to_feed
 
 query = QueryType()
 
@@ -15,9 +15,16 @@ def resolve_hello(_, info):
   return "Hello from GraphQL!"
 
 @query.field("trains")
-def resolve_trains(_, info):
-  c_train_data = ace_feed.filter_trips(line_id="A", underway=True)
-  trains = map(convert_train_data, c_train_data)
+def resolve_trains(*_, lines):
+  # should dedup lines: https://stackoverflow.com/questions/6764909/how-to-remove-all-duplicate-items-from-a-list
+  train_data = []
+  for line_with_direction in lines:
+    line = line_with_direction['line']
+    direction = line_with_direction['direction']
+    line_data = line_to_feed[line].filter_trips(line_id=line, travel_direction=direction, underway=True)
+    train_data.extend(line_data)
+
+  trains = map(convert_train_data, train_data)
   return trains
 
 def convert_train_data(train_data):
@@ -32,6 +39,7 @@ def convert_train_data(train_data):
     top=top_dict[train_stop_name],
     left=left_dict[train_stop_name],
     status=train_status,
+    line=train_data.route_id,
     direction=train_data.direction
   )
   return train
