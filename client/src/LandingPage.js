@@ -3,6 +3,9 @@ import map from './map.jpg';
 import cTrainImg from './c.svg';
 import cInTransitImg from './c_in_transit.svg';
 import Container from 'react-bootstrap/Container';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
+import Form from 'react-bootstrap/Form';
 import ImageMarker from 'react-image-marker';
 import { useEffect, useState } from 'react';
 import "./App.css";
@@ -34,17 +37,15 @@ function Train(props) {
 }
 
 function LandingPage() {
+  const [line, setLine] = useState('C')
+  const [direction, setDirection] = useState('N')
   const { error, data, refetch } = useQuery(TRAINS_QUERY, {
     variables: {
       lines: [
         {
-          line: 'C',
-          direction: 'S'
+          line: line,
+          direction: direction
         },
-        {
-          line: 'C',
-          direction: 'N'
-        }
       ]
     }
   })
@@ -77,7 +78,31 @@ function LandingPage() {
   // const [markers, setMarkers] = useState([]);
 
   return (
-    <Container fluid>
+    <div>
+      <Container fluid>
+        <Row>
+          <Col>
+            <Form>
+              <Form.Group as={Row}>
+                <Col>
+                <Form.Select onChange={({ target }) => setLine(target.value)}>
+                  <option value="C" defaultValue>C</option>
+                  <option value="A">A</option>
+                  <option value="E">E</option>
+                </Form.Select>
+                </Col>
+                <Col>
+                <Form.Select onChange={({ target }) => setDirection(target.value)}>
+                  <option value="N" defaultValue>Northbound</option>
+                  <option value="S">Southbound</option>
+                </Form.Select>
+                </Col>
+              </Form.Group>
+            </Form>
+          </Col>
+          <Col>Train data coming soon!</Col>
+        </Row>
+      </Container>
       <ImageMarker
         src={map}
         markers={markers}
@@ -87,7 +112,7 @@ function LandingPage() {
         //   setMarkers([...markers, marker])
         // }}
       />
-    </Container>
+    </div>
   );
 }
 
