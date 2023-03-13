@@ -1,7 +1,12 @@
 import { useQuery } from 'graphql-hooks';
 import map from './map.jpg';
-import cTrainImg from './c.svg';
-import cInTransitImg from './c_in_transit.svg';
+import cTrainImg from './assets/c.svg';
+import cInTransitImg from './assets/c_invert.svg';
+import aTrainImg from './assets/a.svg';
+import aInTransitImg from './assets/a_invert.svg';
+import eTrainImg from './assets/e.svg';
+import eInTransitImg from './assets/e_invert.svg';
+import logoImg from './logo.svg';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
@@ -16,20 +21,35 @@ const TRAINS_QUERY = `query TrainsQuery($lines: [LineWithDirection!]!) {
     top
     left
     status
+    line
     direction
   }
 }`
 
+function getTrainImage(line, inTransit) {
+  switch (line) {
+    case 'A':
+      return inTransit ? aInTransitImg : aTrainImg;
+    case 'C':
+      return inTransit ? cInTransitImg : cTrainImg;
+    case 'E':
+      return inTransit ? eInTransitImg : eTrainImg;
+    default:
+      return logoImg;
+  }
+}
+
 function Train(props) {
   const southbound = props.direction === 'S';
   const inTransit = props.status === 'IN_TRANSIT';
+  const line = props.line;
 
-  let image = inTransit ? cInTransitImg : cTrainImg;
+  let image = getTrainImage(line, inTransit);
   return (
     <div>
       <img
         src={image}
-        alt="C train logo"
+        alt={line + " train logo"}
         className={southbound ? 'Train_south' : undefined}
       />
     </div>
@@ -37,49 +57,50 @@ function Train(props) {
 }
 
 function LandingPage() {
-  const [line, setLine] = useState('C')
-  const [direction, setDirection] = useState('N')
-  const { error, data, refetch } = useQuery(TRAINS_QUERY, {
-    variables: {
-      lines: [
-        {
-          line: line,
-          direction: direction
-        },
-      ]
-    }
-  })
+  // const [line, setLine] = useState('C')
+  // const [direction, setDirection] = useState('N')
+  // const { error, data, refetch } = useQuery(TRAINS_QUERY, {
+  //   variables: {
+  //     lines: [
+  //       {
+  //         line: line,
+  //         direction: direction
+  //       },
+  //     ]
+  //   }
+  // })
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      refetch()
-    }, 1000);
-    return () => clearInterval(interval);
-  }, [refetch]);
+  // useEffect(() => {
+  //   const interval = setInterval(() => {
+  //     refetch()
+  //   }, 1000);
+  //   return () => clearInterval(interval);
+  // }, [refetch]);
 
-  if (error) {
-    return <label>Error fetching Trains!</label>
-  }
+  // if (error) {
+  //   return <label>Error fetching Trains!</label>
+  // }
 
-  let markers = []
-  if (data) {
-    markers = data.trains.map(train => {
-      const train_data = {
-        key: train.id,
-        left: train.left,
-        top: train.top,
-        status: train.status,
-        direction: train.direction
-      }
-      return train_data
-    })
-  }
+  // let markers = []
+  // if (data) {
+  //   markers = data.trains.map(train => {
+  //     const train_data = {
+  //       key: train.id,
+  //       left: train.left,
+  //       top: train.top,
+  //       status: train.status,
+  //       line: train.line,
+  //       direction: train.direction
+  //     }
+  //     return train_data
+  //   })
+  // }
 
-  // const [markers, setMarkers] = useState([]);
+  const [markers, setMarkers] = useState([]);
 
   return (
     <div>
-      <Container fluid>
+      {/* <Container fluid>
         <Row>
           <Col>
             <Form>
@@ -102,15 +123,15 @@ function LandingPage() {
           </Col>
           <Col>Train data coming soon!</Col>
         </Row>
-      </Container>
+      </Container> */}
       <ImageMarker
         src={map}
         markers={markers}
-        markerComponent={Train}
-        // onAddMarker={(marker) => {
-        //   console.log(marker.top + "\n" + marker.left);
-        //   setMarkers([...markers, marker])
-        // }}
+        //markerComponent={Train}
+        onAddMarker={(marker) => {
+          console.log(marker.top + "\n" + marker.left);
+          setMarkers([...markers, marker])
+        }}
       />
     </div>
   );
