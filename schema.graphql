@@ -26,6 +26,7 @@ enum Line {
   A
   C
   E
+  FIVE
 }
 
 input LineWithDirection {

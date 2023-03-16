@@ -3,11 +3,11 @@ from nyct_gtfs import NYCTFeed
 from api_key import *
 from stops_to_coordinates import top_dict, left_dict
 from train import Train
-from data import line_to_feed
+from data import line_to_feed, line_to_number, number_to_line
 
 query = QueryType()
 
-max_counter = 5
+max_counter = 10
 train_id_to_previous_stop = {}
 train_ids_in_transit = {}
 
@@ -22,6 +22,8 @@ def resolve_trains(*_, lines):
   for line_with_direction in lines:
     line = line_with_direction['line']
     direction = line_with_direction['direction']
+    if line in line_to_number:
+      line = line_to_number[line]
     line_data = line_to_feed[line].filter_trips(line_id=line, travel_direction=direction, underway=True)
     train_data.extend(line_data)
 
@@ -30,7 +32,7 @@ def resolve_trains(*_, lines):
 
 def convert_train_data(train_data):
   train_id = train_data.trip_id
-  train_stop_name = train_data._stops.get_station_name(train_data.location)
+  train_stop_name = train_data.location[:-1]
   train_status = get_train_status(train_id, train_stop_name)
   if train_status == "IN_TRANSIT":
     previous_stop_name = train_id_to_previous_stop[train_id]
@@ -43,12 +45,15 @@ def convert_train_data(train_data):
     top = top_dict[train_stop_name]
     left = left_dict[train_stop_name]
 
+  line = train_data.route_id
+  if line in number_to_line:
+    line = number_to_line[line]
   train = Train(
     id=train_id,
     top=top,
     left=left,
     status=train_status,
-    line=train_data.route_id,
+    line=line,
     direction=train_data.direction
   )
   return train
