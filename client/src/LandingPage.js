@@ -6,6 +6,8 @@ import aTrainImg from './assets/a.svg';
 import aInTransitImg from './assets/a_invert.svg';
 import eTrainImg from './assets/e.svg';
 import eInTransitImg from './assets/e_invert.svg';
+import fiveTrainImg from './assets/five.svg';
+import fiveInTransitImg from './assets/five_invert.svg';
 import logoImg from './logo.svg';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
@@ -34,8 +36,10 @@ function getTrainImage(line, inTransit) {
       return inTransit ? cInTransitImg : cTrainImg;
     case 'E':
       return inTransit ? eInTransitImg : eTrainImg;
+    case 'FIVE':
+      return inTransit ? fiveInTransitImg : fiveTrainImg;
     default:
-      return logoImg;
+      return inTransit ? cTrainImg: cInTransitImg;
   }
 }
 
@@ -57,50 +61,50 @@ function Train(props) {
 }
 
 function LandingPage() {
-  // const [line, setLine] = useState('C')
-  // const [direction, setDirection] = useState('N')
-  // const { error, data, refetch } = useQuery(TRAINS_QUERY, {
-  //   variables: {
-  //     lines: [
-  //       {
-  //         line: line,
-  //         direction: direction
-  //       },
-  //     ]
-  //   }
-  // })
+  const [line, setLine] = useState('C')
+  const [direction, setDirection] = useState('N')
+  const { error, data, refetch } = useQuery(TRAINS_QUERY, {
+    variables: {
+      lines: [
+        {
+          line: line,
+          direction: direction
+        },
+      ]
+    }
+  })
 
-  // useEffect(() => {
-  //   const interval = setInterval(() => {
-  //     refetch()
-  //   }, 1000);
-  //   return () => clearInterval(interval);
-  // }, [refetch]);
+  useEffect(() => {
+    const interval = setInterval(() => {
+      refetch()
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [refetch]);
 
-  // if (error) {
-  //   return <label>Error fetching Trains!</label>
-  // }
+  if (error) {
+    return <label>Error fetching Trains!</label>
+  }
 
-  // let markers = []
-  // if (data) {
-  //   markers = data.trains.map(train => {
-  //     const train_data = {
-  //       key: train.id,
-  //       left: train.left,
-  //       top: train.top,
-  //       status: train.status,
-  //       line: train.line,
-  //       direction: train.direction
-  //     }
-  //     return train_data
-  //   })
-  // }
+  let markers = []
+  if (data) {
+    markers = data.trains.map(train => {
+      const train_data = {
+        key: train.id,
+        left: train.left,
+        top: train.top,
+        status: train.status,
+        line: train.line,
+        direction: train.direction
+      }
+      return train_data
+    })
+  }
 
-  const [markers, setMarkers] = useState([]);
+  // const [markers, setMarkers] = useState([]);
 
   return (
     <div>
-      {/* <Container fluid>
+      <Container fluid>
         <Row>
           <Col>
             <Form>
@@ -123,15 +127,15 @@ function LandingPage() {
           </Col>
           <Col>Train data coming soon!</Col>
         </Row>
-      </Container> */}
+      </Container>
       <ImageMarker
         src={map}
         markers={markers}
-        //markerComponent={Train}
-        onAddMarker={(marker) => {
-          console.log(marker.top + "\n" + marker.left);
-          setMarkers([...markers, marker])
-        }}
+        markerComponent={Train}
+        // onAddMarker={(marker) => {
+        //   console.log(marker.top + "\n" + marker.left);
+        //   setMarkers([...markers, marker])
+        // }}
       />
     </div>
   );
