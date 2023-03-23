@@ -61,16 +61,16 @@ function Train(props) {
 }
 
 function LandingPage() {
-  const [line, setLine] = useState('C')
-  const [direction, setDirection] = useState('N')
+  const [lineData, setLineData] = useState([
+    {
+      id: 1,
+      line: 'C',
+      direction: 'N'
+    }
+  ]);
   const { error, data, refetch } = useQuery(TRAINS_QUERY, {
     variables: {
-      lines: [
-        {
-          line: line,
-          direction: direction
-        },
-      ]
+      lines: lineData.map(({line, direction}) => ({line, direction}))
     }
   })
 
@@ -100,6 +100,42 @@ function LandingPage() {
     })
   }
 
+  const updateLineData = (data) => {
+    let newLineData = lineData.reduce(
+      (accLineData, curData) => {
+        if (curData.id === data.id) {
+          accLineData.push(data)
+        } else {
+          accLineData.push(curData)
+        }
+        return accLineData
+      },
+      []
+    )
+    setLineData(newLineData)
+  }
+
+
+  const form = lineData.map(data => {
+    return (
+      <Form.Group as={Row}>
+        <Col>
+          <Form.Select value={data.line} onChange={({ target }) => updateLineData({ id: data.id, line: target.value, direction: data.direction })}>
+            <option value="C">C</option>
+            <option value="A">A</option>
+            <option value="E">E</option>
+          </Form.Select>
+        </Col>
+        <Col>
+          <Form.Select value={data.direction} onChange={({ target }) => updateLineData({ id: data.id, line: data.line, direction: target.value })}>
+            <option value="N">Northbound</option>
+            <option value="S">Southbound</option>
+          </Form.Select>
+        </Col>
+      </Form.Group>
+    );
+  })
+
   // const [markers, setMarkers] = useState([]);
 
   return (
@@ -108,21 +144,7 @@ function LandingPage() {
         <Row>
           <Col>
             <Form>
-              <Form.Group as={Row}>
-                <Col>
-                <Form.Select onChange={({ target }) => setLine(target.value)}>
-                  <option value="C" defaultValue>C</option>
-                  <option value="A">A</option>
-                  <option value="E">E</option>
-                </Form.Select>
-                </Col>
-                <Col>
-                <Form.Select onChange={({ target }) => setDirection(target.value)}>
-                  <option value="N" defaultValue>Northbound</option>
-                  <option value="S">Southbound</option>
-                </Form.Select>
-                </Col>
-              </Form.Group>
+              {form}
             </Form>
           </Col>
           <Col>Train data coming soon!</Col>
